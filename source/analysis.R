@@ -1,22 +1,6 @@
 library(tidyverse)
+library(scales)
 
-# The functions might be useful for A4
-source("../source/a4-helpers.R")
-
-## Test queries ----
-#----------------------------------------------------------------------------#
-# Simple queries for basic testing
-#----------------------------------------------------------------------------#
-# Return a simple string
-test_query1 <- function() {
-  return ("Hello world")
-}
-
-# Return a vector of numbers
-test_query2 <- function(num=6) {
-  v <- seq(1:num)
-  return(v)
-}
 
 ## Section 2  ---- 
 #----------------------------------------------------------------------------#
@@ -116,10 +100,12 @@ return()
 
 # This function retruns a chart that graphs the year with the total_jail_pop per year
 plot_jail_pop_for_us <- function()  {
-  ggplot(get_year_jail_pop(), aes(year, total_jail_pop_by_year)) +
+  ggplot(get_year_jail_pop(), aes(as.numeric(year), total_jail_pop_by_year)) +
     ggtitle("Increase of Jail Population in U.S. (1970-2018)") + 
     labs(y = "Total Jail Population", x = "Year") + 
-    geom_col()
+    geom_col() + 
+    scale_x_continuous(limits = c(1969, 2020)) + 
+    scale_y_continuous(labels = comma)
 } 
 
 ## Section 4  ---- 
@@ -271,11 +257,12 @@ black_state <- county_level_data %>%
     mutate = sum(total_pop / black_jail_pop)
   )
 
+library(usmap)
 map_of_black_incarceration <- plot_usmap(
   data = black_state, values = "pop", color = "black",
   name = "Black Jail Population"
 ) +
-  coord_fixed(1) +
+  # coord_fixed() +
   scale_fill_gradientn(
     colours = c("white", "blue"),
     breaks = c(10, 100, 1000, 10000),
