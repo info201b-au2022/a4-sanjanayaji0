@@ -5,9 +5,10 @@ date: '2022-11-22'
 output: html_document
 ---
 
-```{r echo=FALSE, eval=TRUE, message=FALSE}
-source("../source/a4-helpers.R")
-source("../source/analysis.R")
+```{r setup, include = TRUE}
+library(scales)
+source("/Users/sanjana/Documents/info201/assignments/a4-sanjanayaji0/source/analysis.R")
+knitr::opts_chunk$set(error = TRUE)
 ```
 
 ## Abstract
@@ -20,11 +21,11 @@ The main goal of this data analysis is to expose patterns of inequality using in
 
 ## Data Summary
 
-I first analyzed the average ratio of incarcerated populations across different racial groups compared to the overall population in California across all counties. More specifically, I wanted to analyze the inconsistencies in these values. I chose California because of it's racial diversity. I found that for Asian-Americans and Pacific Islanders, the ratio was `r analysis$mean_ca_aapi_ratio`. For LatinX people, the ratio was `r analysis$mean_ca_latinx_ratio`. For the native population, the ratio was `r analysis$mean_ca_native_ratio`, while the black population value was `r analysis$mean_ca_black_ratio`. Finally, the white population ratio was `r analysis$mean_ca_white_ratio`. The mean ratio of incarcerated Black people to the total Black population in California was significantly larger than the White population. While we would expect these ratios to be similar, due to the immense systemic racism in the US, they are unequal. The ratio of incarcerated Black people is the largest, followed by Native people, Latinx people, white people, and then AAPI people. The data speaks for itself: there is abolsutely racial inequality in the prison system, even in California, which is a state that presents itself as extremely progressive.
+I first analyzed the average ratio of incarcerated populations across different racial groups compared to the overall population in California across all counties. More specifically, I wanted to analyze the inconsistencies in these values. I chose California because of it's racial diversity. I found that for Asian-Americans and Pacific Islanders, the ratio was **`r mean_ca_aapi_ratio`**. For LatinX people, the ratio was **`r mean_ca_latinx_ratio`**. For the native population, the ratio was **`r mean_ca_native_ratio`**, while the black population value was **`r mean_ca_black_ratio`**. Finally, the white population ratio was **`r mean_ca_white_ratio`**. The mean ratio of incarcerated Black people to the total Black population in California was significantly larger than the White population. While we would expect these ratios to be similar, due to the immense systemic racism in the US, they are unequal. The ratio of incarcerated Black people is the largest, followed by Native people, Latinx people, white people, and then AAPI people. The data speaks for itself: there is abolsutely racial inequality in the prison system, even in California, which is a state that presents itself as extremely progressive.
 
 ## Growth of the U.S. Prison Population
 
-```{r echo=FALSE, warning = FALSE}
+```{r echo=FALSE}
 plot_jail_pop_for_us()
 ```
 
@@ -34,7 +35,7 @@ The data shows a general increase of incarceration rates in the United States. T
 
 ## Growth of Prison Population by State
 
-```{r echo=FALSE, warning = FALSE}
+```{r echo=FALSE}
 plot_jail_pop_by_states(c("CA"))
 ```
 
@@ -44,7 +45,7 @@ I chose to focus on data from California, as it is my main focus for this data a
 
 ## Change in Percentage of Incarcerated Population by Race Over Time?
 
-```{r echo=FALSE, warning = FALSE}
+```{r echo=FALSE}
 change_in_percentage_by_year()
 ```
 
@@ -54,7 +55,7 @@ This chart shows a very fluctuating representation of the percent changes of inc
 
 ## What was the United States Black Jail Population in 2018?
 
-```{r echo=FALSE, warning = FALSE}
+```{r echo=FALSE}
 map_of_black_incarceration
 ```
 
