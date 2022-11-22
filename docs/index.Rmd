@@ -1,7 +1,7 @@
 ---
-title: "Your A4 Report Title (TODO: Revise title)"
-author: "Your Name"
-date: '2022-11-01'
+title: "Racial Inequalities in the Prison System"
+author: "Sanjana Somayajula"
+date: '2022-11-22'
 output: html_document
 ---
 
@@ -10,36 +10,54 @@ source("../source/a4-helpers.R")
 source("../source/analysis.R")
 ```
 
-## Abstract 
-[TODO: Include a short abstract (about 50 words)]
+## Abstract
 
-# Test (TODO: Remove before submission!!)
-```{r echo=FALSE}
-q1_string <- test_query1()
-num <- 5
-```
-As you know, this is a markdown report. The [R Markdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) is **useful!**
+In this report, we analyzed the trends in incarceration across the United States. I decided to focus on how race plays a role in incarceration, in order to identify any disproportionalities and general inequalities. I also focused much of my data on California, my home state, as is a very racially diverse state.
 
-* Here's a test of a dynamic variable. Say **"`r q1_string`!!!** 
-* Here's another test. A vector
-of numbers: `r test_query2(num)`.
+## Introduction
 
-Recall that _{r echo=TRUE}_ can be used to display the code, 
-which is very useful when developing and debugging a report. Here's an example: 
+The main goal of this data analysis is to expose patterns of inequality using incarceration data presented by *Vera*, a national organization that partners with impacted communities and government leaders for change. The social issues related to this data set have to do with racial inequalities in the prison system, as well as discrepancies with gender. A direct stakeholder in this research could be anyone who is planning to report on inequalities and demographics within the prison system, and an indirect stakeholder could be the general public, as this data impacts everyone due to the fact that anyone could be at risk of incarceration and should be aware of inequalities faced by certain minorities. The central value is information availability as Vera presents information that is often hard to understand and find. The main question I answer in this report is: What role does race play in incarceration? More specifically: Where in the United States is the Black population more likely to be incarcerated?
 
-```{r echo=TRUE}
-num <- 5
-sum <- sum(test_query2(num))
-print(sum)
+## Data Summary
+
+I first analyzed the average ratio of incarcerated populations across different racial groups compared to the overall population in California across all counties. More specifically, I wanted to analyze the inconsistencies in these values. I chose California because of it's racial diversity. I found that for Asian-Americans and Pacific Islanders, the ratio was `r analysis$mean_ca_aapi_ratio`. For LatinX people, the ratio was `r analysis$mean_ca_latinx_ratio`. For the native population, the ratio was `r analysis$mean_ca_native_ratio`, while the black population value was `r analysis$mean_ca_black_ratio`. Finally, the white population ratio was `r analysis$mean_ca_white_ratio`. The mean ratio of incarcerated Black people to the total Black population in California was significantly larger than the White population. While we would expect these ratios to be similar, due to the immense systemic racism in the US, they are unequal. The ratio of incarcerated Black people is the largest, followed by Native people, Latinx people, white people, and then AAPI people. The data speaks for itself: there is abolsutely racial inequality in the prison system, even in California, which is a state that presents itself as extremely progressive.
+
+## Growth of the U.S. Prison Population
+
+```{r echo=FALSE, warning = FALSE}
+plot_jail_pop_for_us()
 ```
 
-## Introduction 
-[TODO]
+*Caption: This is a bar chart that shows the growth of the U.S. prison population from 1970 to 2018.*
 
-## Data Summary 
-[TODO]
+The data shows a general increase of incarceration rates in the United States. The rate hit its peak around 2010, and comes back down again, though not significantly. My main question is: What caused such an increase in total incarceration? Is it due to an increase in policing or an increase in crime?
 
-[TODO ... other sections ... See Canvas for details]
+## Growth of Prison Population by State
 
-_All the very best with your work!_
+```{r echo=FALSE, warning = FALSE}
+plot_jail_pop_by_states(c("CA"))
+```
 
+*Caption: This is a line chart that shows the growth of the U.S. prison population from 1970 to 2018 by one or more states.*
+
+I chose to focus on data from California, as it is my main focus for this data analysis. This chart shows a significant increase in jail population in California, especially from 1970 to 1990. There is then a slight decrease, from 2008 to 2010, and then another increase, followed by a plateau. My main question is: What kind of crimes caused an such an increase in incarceration rates from 1980 to 1990. For example, was there an increase in drug-related crimes, murder, or robberies?
+
+## Change in Percentage of Incarcerated Population by Race Over Time?
+
+```{r echo=FALSE, warning = FALSE}
+change_in_percentage_by_year()
+```
+
+*Caption: This is a line chart showing the change in percentage of incarcerated population by each racial group. The blue line references the black population, the red represents the white population, the green represents the Latinx population, and the purple represents the native population, and the orange represents the AAPI population.*
+
+This chart shows a very fluctuating representation of the percent changes of incarceration across all races. However, the red line, which represents the white population has the largest peaks and dips. The proportion of the incarcerated Latinx population shows a steady increase and then a general decline. The white population also has severe dips in incarceration, while other racial minorities do not get that privilege. My question is: What year had a peak in percent change of incarceration for the Black population? The answer to this is around 2007. This was also the peak for the AAPI population.
+
+## What was the United States Black Jail Population in 2018?
+
+```{r echo=FALSE, warning = FALSE}
+map_of_black_incarceration
+```
+
+*Caption: This is a US chart meant to compare and contrast the total Black incarcerated population for each state in 2018.*
+
+This chart represents all of the Black incarcerated population by each state. The darker the shade of blue, the higher the population. The gray areas mean that there was no information available for that state. I chose 2018 because it was the most recent data. As can be examined from the chart, the highest total Black jail population is in California and New York. These states have the largest black population so that makes sense. Excluding California and New York, southern states tend to have higher incarceration rates, which also aligns, as these states have a larger history of racism. This presents an example of inequality as, due to overpolicing in larger cities such as in Los Angeles, and New York City, there is a much larger rate of incarceration. My question is: Is there also a similar pattern of incarceration for other racial groups? And what is this pattern? Also, what inequalities would this examination of data unearth?
