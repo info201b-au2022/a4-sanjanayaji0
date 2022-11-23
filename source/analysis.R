@@ -8,31 +8,30 @@ library(scales)
 #----------------------------------------------------------------------------#
 
 # loading county level data 
-county_level_data <- read.csv("https://raw.githubusercontent.com/vera-institute/incarceration-trends/master/incarceration_trends.csv")
+incarceration_data <- read.csv("https://raw.githubusercontent.com/vera-institute/incarceration-trends/master/incarceration_trends.csv")
 
 # The following calculated data is to track the ratio of incarcerated individuals of multiple 
 # racial groups in Los Angeles County 
 
-# In the most recent year, what was the ratio of incarcerated AAPI individuals who were incarcerated in CA? First, make a column called ratio_aapi, and then pull data from most recent year and Santa Clara county
+# In the most recent year, what was the ratio of incarcerated AAPI individuals who were incarcerated in CA? First, make a column called ratio_aapi, and then pull data/
 
-county_level_data <- county_level_data %>%
+incarceration_data <- incarceration_data %>%
   drop_na() %>%
   mutate(ratio_aapi = aapi_jail_pop/aapi_pop_15to64)
 
-ca_aapi_ratio <- county_level_data %>%
+ca_aapi_ratio <- incarceration_data %>%
   filter(state == "CA") %>%
   filter(year == max(year)) %>%
   pull(ratio_aapi) 
 
 mean_ca_aapi_ratio <- mean(ca_aapi_ratio)
 
-# In the most recent year, what was the ratio of incarcerated Black individuals who were incarcerated in CA? First, make a column called ratio_black, and then pull data from most recent year and Santa Clara county
-
-county_level_data <- county_level_data %>%
+# In the most recent year, what was the ratio of incarcerated Black individuals who were incarcerated in CA? First, make a column called ratio_black, and then pull data 
+incarceration_data <- incarceration_data %>%
   drop_na() %>%
   mutate(ratio_black = black_jail_pop/black_pop_15to64)
 
-ca_black_ratio <- county_level_data %>%
+ca_black_ratio <- incarceration_data %>%
   filter(state == "CA") %>%
   filter(year == max(year)) %>%
   pull(ratio_black)
@@ -41,11 +40,11 @@ mean_ca_black_ratio <- mean(ca_black_ratio)
 
 # In the most recent year, what was the ratio of incarcerated Latinx individuals who were incarcerated in CA?
 
-county_level_data <- county_level_data %>%
+incarceration_data <- incarceration_data %>%
   drop_na() %>%
   mutate(ratio_latinx = latinx_jail_pop/latinx_pop_15to64)
 
-ca_latinx_ratio <- county_level_data %>%
+ca_latinx_ratio <- incarceration_data %>%
   filter(state == "CA") %>%
   filter(year == max(year)) %>%
   pull(ratio_latinx)
@@ -54,11 +53,11 @@ mean_ca_latinx_ratio <- mean(ca_latinx_ratio)
 
 # In the most recent year, what was the ratio of incarcerated Native individuals who were incarcerated in CA?
 
-county_level_data <- county_level_data %>%
+incarceration_data <- incarceration_data %>%
   drop_na() %>%
   mutate(ratio_native = native_jail_pop/native_pop_15to64)
 
-ca_native_ratio <- county_level_data %>%
+ca_native_ratio <- incarceration_data %>%
   filter(state == "CA") %>%
   filter(year == max(year)) %>%
   pull(ratio_native)
@@ -67,11 +66,11 @@ mean_ca_native_ratio <- mean(ca_native_ratio)
 
 # In the most recent year, what was the ratio of incarcerated White individuals who were incarcerated in CA?
 
-county_level_data <- county_level_data %>%
+incarceration_data <- incarceration_data %>%
   drop_na() %>%
   mutate(ratio_white = white_jail_pop/white_pop_15to64)
 
-ca_white_ratio <- county_level_data %>%
+ca_white_ratio <- incarceration_data %>%
   filter(state == "CA") %>%
   filter(year == max(year)) %>%
   pull(ratio_white)
@@ -84,12 +83,11 @@ mean_ca_white_ratio <- mean(ca_white_ratio)
 #----------------------------------------------------------------------------#
 
 
-jurisdiction_level_data <- read.csv("https://raw.githubusercontent.com/vera-institute/incarceration-trends/master/incarceration_trends_jail_jurisdiction.csv")
 
 # This function calculates the total_jail_pop per year in the United States
+county_level_data <- read.csv("https://raw.githubusercontent.com/vera-institute/incarceration-trends/master/incarceration_trends.csv")
 get_year_jail_pop <- function() {
-  jurisdiction_level_data %>%
-    mutate(year = gsub("(^\\d{4}).*", "\\1", jurisdiction_level_data$yjid)) %>%
+  county_level_data %>%
     select(year, total_jail_pop) %>%
     drop_na() %>%
     group_by(year) %>%
@@ -117,21 +115,20 @@ plot_jail_pop_for_us <- function()  {
 
 
 # returns a data frame with a given state, year, and total_jail population 
-state_with_total_jail_pop <- left_join(jurisdiction_level_data, county_level_data, by = "fips") %>%
-  select(year.x, state, total_jail_pop.x) %>%
-  drop_na()
 
 get_jail_pop_by_states <- function(states) {
-  state_with_total_jail_pop %>%
+  incarceration_data %>%
     filter(state %in% states) %>%
-    group_by(year.x) %>%
-    mutate(total_jail_pop_by_state = sum(total_jail_pop.x)) %>%
+    group_by(year) %>%
+    drop_na() %>%
+    mutate(total_jail_pop_by_state = sum(total_jail_pop)) %>%
+    select(year, state, total_jail_pop_by_state) %>%
 return()
 }
 
 # returns a chart graphing the year and total_jail population for each state
 plot_jail_pop_by_states <- function (states) {
-  ggplot(get_jail_pop_by_states(states), aes(year.x, total_jail_pop_by_state, colour = state)) +
+  ggplot(get_jail_pop_by_states(states), aes(year, total_jail_pop_by_state, color = state)) +
     ggtitle("Increase of Jail Population in U.S. (1970-2018) By State") + 
     labs (y = "Total Jail Population", x = "Year") +
     geom_line()
@@ -146,7 +143,7 @@ plot_jail_pop_by_states <- function (states) {
 
 # Find the percentage of incarcerated Black people from 2001 - 2013
 black_pop_percent_over_time <- function () {
-  county_level_data %>%
+  incarceration_data %>%
   mutate(black_percent = black_pop_15to64 / total_pop_15to64) %>%
   drop_na(black_percent) %>%
   group_by(year) %>%
@@ -157,7 +154,7 @@ black_pop_percent_over_time <- function () {
 
 # Find the percentage of incarcerated white people from 2001 - 2013
 white_pop_percent_over_time <- function () {
-  county_level_data %>%
+  incarceration_data %>%
     mutate(white_percent = white_pop_15to64 / total_pop_15to64) %>%
     drop_na(white_percent) %>%
     group_by(year) %>%
@@ -168,7 +165,7 @@ white_pop_percent_over_time <- function () {
 
 # Find the percentage of incarcerated Latinx people from 2001 - 2013
 latinx_pop_percent_over_time <- function () {
-  county_level_data %>%
+  incarceration_data %>%
     mutate(latinx_percent = latinx_pop_15to64 / total_pop_15to64) %>%
     drop_na(latinx_percent) %>%
     group_by(year) %>%
@@ -180,7 +177,7 @@ latinx_pop_percent_over_time <- function () {
 
 # Find the percentage of incarcerated AAPI people from 2001 - 2013
 aapi_pop_percent_over_time <- function () {
-  county_level_data %>%
+  incarceration_data %>%
     mutate(aapi_percent = aapi_pop_15to64 / total_pop_15to64) %>%
     drop_na(aapi_percent) %>%
     group_by(year) %>%
@@ -191,7 +188,7 @@ aapi_pop_percent_over_time <- function () {
 
 # Find the percentage of incarcerated Native people from 2001 - 2013
 native_pop_percent_over_time <- function () {
-  county_level_data %>%
+  incarceration_data %>%
     mutate(native_percent = native_pop_15to64 / total_pop_15to64) %>%
     drop_na(native_percent) %>%
     group_by(year) %>%
@@ -246,7 +243,7 @@ change_in_percentage_by_year <- function () {
 
 ## Load data frame ---- 
 
-black_state <- county_level_data %>%
+black_state <- incarceration_data %>%
   group_by(state) %>%
   drop_na() %>%
   filter(year == max(year)) %>%
