@@ -36,12 +36,12 @@ The data shows a general increase of incarceration rates in the United States. T
 ## Growth of Prison Population by State
 
 ```{r echo=FALSE}
-plot_jail_pop_by_states(c("CA", "WA"))
+plot_jail_pop_by_states(c("CA", "WA", "NY", "TX"))
 ```
 
 *Caption: This is a line chart that shows the growth of the U.S. prison population from 1970 to 2018 by one or more states.*
 
-I chose to focus on data from California, as it is my main focus for this data analysis. I compared California's data with Washington for contrast. This chart shows a significant difference between California and Washington's total jail population. California's jail population is much larger. There is a huge increase from 1980 to 1990 and it reaches it's peak around 20011 (after a few minor dips). From 1970, there has been a major increase in prison population in California. My main question is: What kind of crimes caused an such an increase in incarceration rates from 1980 to 1990? For example, was there an increase in drug-related crimes, murder, robberies, etc?
+I chose to focus on data from California, as it is my main focus for this data analysis. I compared California's data with Washington, New York, and Texas for contrast. This chart shows a significant difference between California and Washington, Texas, and New York's total jail population. California's jail population is much larger. There is a huge increase from 1980 to 1990 and it reaches it's peak around 20011 (after a few minor dips). From 1970, there has been a major increase in prison population in California. My main question is: What kind of crimes caused an such an increase in incarceration rates from 1980 to 1990? For example, was there an increase in drug-related crimes, murder, robberies, etc?
 
 ## Change in Percentage of Incarcerated Population by Race Over Time?
 
