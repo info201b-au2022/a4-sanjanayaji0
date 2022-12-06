@@ -16,7 +16,6 @@ incarceration_data <- read.csv("https://raw.githubusercontent.com/vera-institute
 # In the most recent year, what was the ratio of incarcerated AAPI individuals who were incarcerated in CA? First, make a column called ratio_aapi, and then pull data/
 
 incarceration_data <- incarceration_data %>%
-  drop_na() %>%
   mutate(ratio_aapi = aapi_jail_pop/aapi_pop_15to64)
 
 ca_aapi_ratio <- incarceration_data %>%
@@ -24,11 +23,10 @@ ca_aapi_ratio <- incarceration_data %>%
   filter(year == max(year)) %>%
   pull(ratio_aapi) 
 
-mean_ca_aapi_ratio <- mean(ca_aapi_ratio)
+mean_ca_aapi_ratio <- mean(ca_aapi_ratio, na.rm = TRUE)
 
 # In the most recent year, what was the ratio of incarcerated Black individuals who were incarcerated in CA? First, make a column called ratio_black, and then pull data 
 incarceration_data <- incarceration_data %>%
-  drop_na() %>%
   mutate(ratio_black = black_jail_pop/black_pop_15to64)
 
 ca_black_ratio <- incarceration_data %>%
@@ -36,12 +34,11 @@ ca_black_ratio <- incarceration_data %>%
   filter(year == max(year)) %>%
   pull(ratio_black)
 
-mean_ca_black_ratio <- mean(ca_black_ratio)
+mean_ca_black_ratio <- mean(ca_black_ratio, na.rm = TRUE)
 
 # In the most recent year, what was the ratio of incarcerated Latinx individuals who were incarcerated in CA?
 
 incarceration_data <- incarceration_data %>%
-  drop_na() %>%
   mutate(ratio_latinx = latinx_jail_pop/latinx_pop_15to64)
 
 ca_latinx_ratio <- incarceration_data %>%
@@ -49,12 +46,11 @@ ca_latinx_ratio <- incarceration_data %>%
   filter(year == max(year)) %>%
   pull(ratio_latinx)
 
-mean_ca_latinx_ratio <- mean(ca_latinx_ratio)
+mean_ca_latinx_ratio <- mean(ca_latinx_ratio, na.rm = TRUE)
 
 # In the most recent year, what was the ratio of incarcerated Native individuals who were incarcerated in CA?
 
 incarceration_data <- incarceration_data %>%
-  drop_na() %>%
   mutate(ratio_native = native_jail_pop/native_pop_15to64)
 
 ca_native_ratio <- incarceration_data %>%
@@ -62,12 +58,11 @@ ca_native_ratio <- incarceration_data %>%
   filter(year == max(year)) %>%
   pull(ratio_native)
 
-mean_ca_native_ratio <- mean(ca_native_ratio)
+mean_ca_native_ratio <- mean(ca_native_ratio, na.rm = TRUE)
 
 # In the most recent year, what was the ratio of incarcerated White individuals who were incarcerated in CA?
 
 incarceration_data <- incarceration_data %>%
-  drop_na() %>%
   mutate(ratio_white = white_jail_pop/white_pop_15to64)
 
 ca_white_ratio <- incarceration_data %>%
@@ -75,7 +70,7 @@ ca_white_ratio <- incarceration_data %>%
   filter(year == max(year)) %>%
   pull(ratio_white)
 
-mean_ca_white_ratio <- mean(ca_white_ratio)
+mean_ca_white_ratio <- mean(ca_white_ratio, na.rm = TRUE)
 
 ## Section 3  ---- 
 #----------------------------------------------------------------------------#
@@ -83,11 +78,10 @@ mean_ca_white_ratio <- mean(ca_white_ratio)
 #----------------------------------------------------------------------------#
 
 
-
 # This function calculates the total_jail_pop per year in the United States
-county_level_data <- read.csv("https://raw.githubusercontent.com/vera-institute/incarceration-trends/master/incarceration_trends.csv")
+# county_level_data <- read.csv("https://raw.githubusercontent.com/vera-institute/incarceration-trends/master/incarceration_trends.csv")
 get_year_jail_pop <- function() {
-  county_level_data %>%
+  incarceration_data %>%
     select(year, total_jail_pop) %>%
     drop_na() %>%
     group_by(year) %>%
@@ -116,20 +110,21 @@ plot_jail_pop_for_us <- function()  {
 
 # returns a data frame with a given state, year, and total_jail population 
 
+
 get_jail_pop_by_states <- function(states) {
   incarceration_data %>%
+    select(state, total_jail_pop, year) %>%
     filter(state %in% states) %>%
-    group_by(year) %>%
+    group_by(state, year) %>%
     drop_na() %>%
-    mutate(total_jail_pop_by_state = sum(total_jail_pop)) %>%
-    select(year, state, total_jail_pop_by_state) %>%
-return()
+    summarise(total_jail_pop_by_year = sum(total_jail_pop), .groups = "drop")
 }
+
 
 # returns a chart graphing the year and total_jail population for each state
 plot_jail_pop_by_states <- function (states) {
-  ggplot(get_jail_pop_by_states(states), aes(year, total_jail_pop_by_state, color = state)) +
-    ggtitle("Increase of Jail Population in U.S. (1970-2018) By State") + 
+  ggplot(get_jail_pop_by_states(states), aes(year, total_jail_pop_by_year, color = state)) +
+    ggtitle("Change in Jail Population in U.S.By State") + 
     labs (y = "Total Jail Population", x = "Year") +
     geom_line()
 }
@@ -197,40 +192,38 @@ native_pop_percent_over_time <- function () {
     drop_na(prop_change)
 }
 
-
+data_frame <- black_pop_percent_over_time() %>%
+  left_join(white_pop_percent_over_time(), by='year') %>%  
+  left_join(latinx_pop_percent_over_time(), by='year') %>%
+  left_join(aapi_pop_percent_over_time(), by = 'year') %>%
+  left_join(native_pop_percent_over_time(), by = 'year')
 
 change_in_percentage_by_year <- function () {
+  colors <- c("Black" = "blue", "White" = "red", "Latinx" = "green", "Native" = "purple", "AAPI" = "orange")
   ggplot() +
   geom_line(
-    data = black_pop_percent_over_time(), aes(x = year, y = prop_change),
-    color = "blue"
+    data = black_pop_percent_over_time(), aes(x = year, y = prop_change, color = "Black")
   ) +
   geom_line(
-    data = white_pop_percent_over_time(), aes(x = year, y = prop_change),
-    color = "red"
+    data = white_pop_percent_over_time(), aes(x = year, y = prop_change, color = "White")
   ) +
   geom_line(
-      data = latinx_pop_percent_over_time(), aes(x = year, y = prop_change),
-      color = "green"
+      data = latinx_pop_percent_over_time(), aes(x = year, y = prop_change, color = "Latinx")
     ) +
   geom_line(
-    data = native_pop_percent_over_time(), aes(x = year, y = prop_change),
-    color = "purple"
+    data = native_pop_percent_over_time(), aes(x = year, y = prop_change, color = "Native")
     ) +
   geom_line(
-    data = aapi_pop_percent_over_time(), aes(x = year, y = prop_change),
-    color = "orange"
+    data = aapi_pop_percent_over_time(), aes(x = year, y = prop_change, color = "AAPI")
     ) +
   labs(
     x = "Year", y = "Percent Change", color = "Race",
     title = "Change in Racial Proportion by Year"
   ) +
-  scale_colour_manual("",
-                      breaks = c("black", "white"),
-                      values = c("white" = "red", "black" = "blue")
-  )
-
+  scale_colour_manual(values = colors)
 }
+
+
 
 
 
